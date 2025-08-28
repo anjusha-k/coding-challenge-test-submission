@@ -8,6 +8,7 @@ import Radio from "@/components/Radio/Radio";
 import Section from "@/components/Section/Section";
 import useAddressBook from "@/hooks/useAddressBook";
 import { useFormFields } from "@/hooks/useFormFields";
+import transformAddress from "./core/models/address";
 
 import styles from "./App.module.css";
 import { Address as AddressType } from "./types";
@@ -23,6 +24,7 @@ function App() {
    */
   const [error, setError] = React.useState<undefined | string>(undefined);
   const [addresses, setAddresses] = React.useState<AddressType[]>([]);
+  const [loading, setLoading] = React.useState(false);
   /**
    * Redux actions
    */
@@ -30,17 +32,41 @@ function App() {
 
 
 
-  /** TODO: Fetch addresses based on houseNumber and postCode using the local BE api
-   * - Example URL of API: ${process.env.NEXT_PUBLIC_URL}/api/getAddresses?postcode=1345&streetnumber=350
-   * - Ensure you provide a BASE URL for api endpoint for grading purposes!
-   * - Handle errors if they occur
-   * - Handle successful response by updating the `addresses` in the state using `setAddresses`
-   * - Make sure to add the houseNumber to each found address in the response using `transformAddress()` function
-   * - Ensure to clear previous search results on each click
-   * - Bonus: Add a loading state in the UI while fetching addresses
-   */
   const handleAddressSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // Clear previous search results
+    setAddresses([]);
+    setError(undefined);
+    
+    if (!postCode || !houseNumber) {
+      setError("Postcode and house number fields mandatory!");
+      return;
+    }
+    
+    setLoading(true);
+    
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+      const response = await fetch(`${baseUrl}/api/getAddresses?postcode=${postCode}&streetnumber=${houseNumber}`);
+      const data = await response.json();
+      
+      if (data.status === 'error') {
+        setError(data.errormessage);
+        return;
+      }
+      
+      if (data.status === 'ok' && data.details) {
+        const transformedAddresses = data.details.map((address: any) => 
+          transformAddress({ ...address, houseNumber, lat: address.lat, lon: address.long })
+        );
+        setAddresses(transformedAddresses);
+      }
+    } catch (err) {
+      setError("Failed to fetch addresses. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   /** TODO: Add basic validation to ensure first name and last name fields aren't empty
@@ -98,7 +124,7 @@ function App() {
                 placeholder="House number"
               />
             </div>
-            <Button type="submit">Find</Button>
+            <Button type="submit" loading={loading}>Find</Button>
           </fieldset>
         </form>
         {addresses.length > 0 &&
