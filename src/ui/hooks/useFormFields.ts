@@ -25,8 +25,19 @@ export const useFormFields = () => {
     }));
   };
 
+  const clearFields = () => {
+    setFields({
+      postCode: '',
+      houseNumber: '',
+      firstName: '',
+      lastName: '',
+      selectedAddress: ''
+    });
+  };
+
   return {
     fields,
-    handleChange
+    handleChange,
+    clearFields
   };
 };

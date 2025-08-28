@@ -19,7 +19,7 @@ function App() {
   /**
    * Form fields states
    */
-  const { fields, handleChange } = useFormFields();
+  const { fields, handleChange, clearFields } = useFormFields();
   const { postCode, houseNumber, firstName, lastName, selectedAddress } = fields;
   /**
    * Results states
@@ -169,12 +169,16 @@ function App() {
 
         <ErrorMessage message={error} />
 
-        {/* TODO: Add a button to clear all form fields. 
-        Button must look different from the default primary button, see design. 
-        Button text name must be "Clear all fields"
-        On Click, it must clear all form fields, remove all search results and clear all prior
-        error messages
-        */}
+        <Button 
+          variant="secondary" 
+          onClick={() => {
+            clearFields();
+            setAddresses([]);
+            setError(undefined);
+          }}
+        >
+          Clear all fields
+        </Button>
       </Section>
 
       <Section variant="dark">
