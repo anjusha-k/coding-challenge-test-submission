@@ -6,6 +6,7 @@ import Button from "@/components/Button/Button";
 import InputText from "@/components/InputText/InputText";
 import Radio from "@/components/Radio/Radio";
 import Section from "@/components/Section/Section";
+import Form from "@/components/Form/Form";
 import useAddressBook from "@/hooks/useAddressBook";
 import { useFormFields } from "@/hooks/useFormFields";
 import transformAddress from "./core/models/address";
@@ -32,7 +33,7 @@ function App() {
 
 
 
-  const handleAddressSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
+  const handleAddressSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     // Clear previous search results
@@ -72,7 +73,7 @@ function App() {
   /** TODO: Add basic validation to ensure first name and last name fields aren't empty
    * Use the following error message setError("First name and last name fields mandatory!")
    */
-  const handlePersonSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
+  const handlePersonSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!selectedAddress || !addresses.length) {
@@ -104,29 +105,29 @@ function App() {
             Enter an address by postcode add personal info and done! 👏
           </small>
         </h1>
-        {/* TODO: Create generic <Form /> component to display form rows, legend and a submit button  */}
-        <form onSubmit={handleAddressSubmit}>
-          <fieldset>
-            <legend>🏠 Find an address</legend>
-            <div className={styles.formRow}>
-              <InputText
-                name="postCode"
-                onChange={handleChange}
-                placeholder="Post Code"
-                value={postCode}
-              />
-            </div>
-            <div className={styles.formRow}>
-              <InputText
-                name="houseNumber"
-                onChange={handleChange}
-                value={houseNumber}
-                placeholder="House number"
-              />
-            </div>
-            <Button type="submit" loading={loading}>Find</Button>
-          </fieldset>
-        </form>
+        <Form
+          onSubmit={handleAddressSubmit}
+          legend="🏠 Find an address"
+          submitButtonText="Find"
+          loading={loading}
+        >
+          <div className={styles.formRow}>
+            <InputText
+              name="postCode"
+              onChange={handleChange}
+              placeholder="Post Code"
+              value={postCode}
+            />
+          </div>
+          <div className={styles.formRow}>
+            <InputText
+              name="houseNumber"
+              onChange={handleChange}
+              value={houseNumber}
+              placeholder="House number"
+            />
+          </div>
+        </Form>
         {addresses.length > 0 &&
           addresses.map((address) => {
             return (
@@ -140,30 +141,29 @@ function App() {
               </Radio>
             );
           })}
-        {/* TODO: Create generic <Form /> component to display form rows, legend and a submit button  */}
         {selectedAddress && (
-          <form onSubmit={handlePersonSubmit}>
-            <fieldset>
-              <legend>✏️ Add personal info to address</legend>
-              <div className={styles.formRow}>
-                <InputText
-                  name="firstName"
-                  placeholder="First name"
-                  onChange={handleChange}
-                  value={firstName}
-                />
-              </div>
-              <div className={styles.formRow}>
-                <InputText
-                  name="lastName"
-                  placeholder="Last name"
-                  onChange={handleChange}
-                  value={lastName}
-                />
-              </div>
-              <Button type="submit">Add to addressbook</Button>
-            </fieldset>
-          </form>
+          <Form
+            onSubmit={handlePersonSubmit}
+            legend="✏️ Add personal info to address"
+            submitButtonText="Add to addressbook"
+          >
+            <div className={styles.formRow}>
+              <InputText
+                name="firstName"
+                placeholder="First name"
+                onChange={handleChange}
+                value={firstName}
+              />
+            </div>
+            <div className={styles.formRow}>
+              <InputText
+                name="lastName"
+                placeholder="Last name"
+                onChange={handleChange}
+                value={lastName}
+              />
+            </div>
+          </Form>
         )}
 
         {/* TODO: Create an <ErrorMessage /> component for displaying an error message */}
