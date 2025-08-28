@@ -71,11 +71,13 @@ function App() {
     }
   };
 
-  /** TODO: Add basic validation to ensure first name and last name fields aren't empty
-   * Use the following error message setError("First name and last name fields mandatory!")
-   */
   const handlePersonSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!firstName || !lastName) {
+      setError("First name and last name fields mandatory!");
+      return;
+    }
 
     if (!selectedAddress || !addresses.length) {
       setError(
