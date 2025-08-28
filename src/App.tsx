@@ -95,6 +95,8 @@ function App() {
       return;
     }
 
+
+    setError(undefined);
     addAddress({ ...foundAddress, firstName, lastName });
   };
 
