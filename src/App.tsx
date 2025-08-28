@@ -3,7 +3,6 @@ import React from "react";
 import Address from "@/components/Address/Address";
 import AddressBook from "@/components/AddressBook/AddressBook";
 import Button from "@/components/Button/Button";
-import InputText from "@/components/InputText/InputText";
 import Radio from "@/components/Radio/Radio";
 import Section from "@/components/Section/Section";
 import Form from "@/components/Form/Form";
@@ -111,28 +110,29 @@ function App() {
           </small>
         </h1>
         <Form
-          onSubmit={handleAddressSubmit}
-          legend="🏠 Find an address"
-          submitButtonText="Find"
+          onFormSubmit={handleAddressSubmit}
+          label="🏠 Find an address"
+          submitText="Find"
           loading={loading}
-        >
-          <div className={styles.formRow}>
-            <InputText
-              name="postCode"
-              onChange={handleChange}
-              placeholder="Post Code"
-              value={postCode}
-            />
-          </div>
-          <div className={styles.formRow}>
-            <InputText
-              name="houseNumber"
-              onChange={handleChange}
-              value={houseNumber}
-              placeholder="House number"
-            />
-          </div>
-        </Form>
+          formEntries={[
+            {
+              name: "postCode",
+              placeholder: "Post Code",
+              extraProps: {
+                value: postCode,
+                onChange: handleChange
+              }
+            },
+            {
+              name: "houseNumber",
+              placeholder: "House number",
+              extraProps: {
+                value: houseNumber,
+                onChange: handleChange
+              }
+            }
+          ]}
+        />
         {addresses.length > 0 &&
           addresses.map((address) => {
             return (
@@ -148,27 +148,29 @@ function App() {
           })}
         {selectedAddress && (
           <Form
-            onSubmit={handlePersonSubmit}
-            legend="✏️ Add personal info to address"
-            submitButtonText="Add to addressbook"
-          >
-            <div className={styles.formRow}>
-              <InputText
-                name="firstName"
-                placeholder="First name"
-                onChange={handleChange}
-                value={firstName}
-              />
-            </div>
-            <div className={styles.formRow}>
-              <InputText
-                name="lastName"
-                placeholder="Last name"
-                onChange={handleChange}
-                value={lastName}
-              />
-            </div>
-          </Form>
+            onFormSubmit={handlePersonSubmit}
+            label="✏️ Add personal info to address"
+            submitText="Add to addressbook"
+            loading={false}
+            formEntries={[
+              {
+                name: "firstName",
+                placeholder: "First name",
+                extraProps: {
+                  value: firstName,
+                  onChange: handleChange
+                }
+              },
+              {
+                name: "lastName",
+                placeholder: "Last name",
+                extraProps: {
+                  value: lastName,
+                  onChange: handleChange
+                }
+              }
+            ]}
+          />
         )}
 
         <ErrorMessage message={error} />

@@ -1,29 +1,50 @@
-import React from 'react';
-import Button from '@/components/Button/Button';
-import styles from './Form.module.css';
+import React, { FunctionComponent } from 'react';
 
-interface FormProps {
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  legend: string;
-  submitButtonText: string;
-  loading?: boolean;
-  children: React.ReactNode;
+import Button from '../Button/Button';
+import InputText from '../InputText/InputText';
+import $ from './Form.module.css';
+
+interface FormEntry {
+  name: string;
+  placeholder: string;
+  extraProps: Omit<React.InputHTMLAttributes<HTMLInputElement>, 'name' | 'placeholder' | 'value' | 'onChange'> & {
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  };
 }
 
-const Form: React.FC<FormProps> = ({
-  onSubmit,
-  legend,
-  submitButtonText,
-  loading = false,
-  children
+interface FormProps {
+  label: string;
+  loading: boolean;
+  formEntries: FormEntry[];
+  onFormSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  submitText: string;
+}
+
+const Form: FunctionComponent<FormProps> = ({
+  label,
+  loading,
+  formEntries,
+  onFormSubmit,
+  submitText
 }) => {
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onFormSubmit}>
       <fieldset>
-        <legend>{legend}</legend>
-        {children}
-        <Button type="submit" loading={loading}>
-          {submitButtonText}
+        <legend>{label}</legend>
+        {formEntries.map(({ name, placeholder, extraProps }, index) => (
+          <div key={`${name}-${index}`} className={$.formRow}>
+            <InputText
+              key={`${name}-${index}`}
+              name={name}
+              placeholder={placeholder}
+              {...extraProps}
+            />
+          </div>
+        ))}
+
+        <Button loading={loading} type="submit">
+          {submitText}
         </Button>
       </fieldset>
     </form>
